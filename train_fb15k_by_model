@@ -1,0 +1,106 @@
+#!/bin/bash
+
+if [ -n "$1" ] && [ -n "$2" ] && [ -n "$3" ] && [ -n "$4" ]
+then
+    python3 -u -m train_embedding $1 benchmarks/FB15K_10_200/ embeddings/tf-gpu_1.11.0/FB15K_10_200_$1/ -c $2 -f $3 -l $4 | tee FB15K_10_200_$1.log
+    mv FB15K_10_200_$1.log embeddings/tf-gpu_1.11.0/FB15K_10_200_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_10_400/ embeddings/tf-gpu_1.11.0/FB15K_10_400_$1/ -c $2 -f $3 -l $4 | tee FB15K_10_400_$1.log
+    mv FB15K_10_400_$1.log embeddings/tf-gpu_1.11.0/FB15K_10_400_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_10_600/ embeddings/tf-gpu_1.11.0/FB15K_10_600_$1/ -c $2 -f $3 -l $4 | tee FB15K_10_600_$1.log
+    mv FB15K_10_600_$1.log embeddings/tf-gpu_1.11.0/FB15K_10_600_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_10_800/ embeddings/tf-gpu_1.11.0/FB15K_10_800_$1/ -c $2 -f $3 -l $4 | tee FB15K_10_800_$1.log
+    mv FB15K_10_800_$1.log embeddings/tf-gpu_1.11.0/FB15K_10_800_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_10_1000/ embeddings/tf-gpu_1.11.0/FB15K_10_1000_$1/ -c $2 -f $3 -l $4 | tee FB15K_10_1000_$1.log
+    mv FB15K_10_1000_$1.log embeddings/tf-gpu_1.11.0/FB15K_10_1000_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_10_1200/ embeddings/tf-gpu_1.11.0/FB15K_10_1200_$1/ -c $2 -f $3 -l $4 | tee FB15K_10_1200_$1.log
+    mv FB15K_10_1200_$1.log embeddings/tf-gpu_1.11.0/FB15K_10_1200_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_10_1400/ embeddings/tf-gpu_1.11.0/FB15K_10_1400_$1/ -c $2 -f $3 -l $4 | tee FB15K_10_1400_$1.log
+    mv FB15K_10_1400_$1.log embeddings/tf-gpu_1.11.0/FB15K_10_1400_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_10_1600/ embeddings/tf-gpu_1.11.0/FB15K_10_1600_$1/ -c $2 -f $3 -l $4 | tee FB15K_10_1600_$1.log
+    mv FB15K_10_1600_$1.log embeddings/tf-gpu_1.11.0/FB15K_10_1600_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_10_1800/ embeddings/tf-gpu_1.11.0/FB15K_10_1800_$1/ -c $2 -f $3 -l $4 | tee FB15K_10_1800_$1.log
+    mv FB15K_10_1800_$1.log embeddings/tf-gpu_1.11.0/FB15K_10_1800_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_10_2000/ embeddings/tf-gpu_1.11.0/FB15K_10_2000_$1/ -c $2 -f $3 -l $4 | tee FB15K_10_2000_$1.log
+    mv FB15K_10_2000_$1.log embeddings/tf-gpu_1.11.0/FB15K_10_2000_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_20_200/ embeddings/tf-gpu_1.11.0/FB15K_20_200_$1/ -c $2 -f $3 -l $4 | tee FB15K_20_200_$1.log
+    mv FB15K_20_200_$1.log embeddings/tf-gpu_1.11.0/FB15K_20_200_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_20_400/ embeddings/tf-gpu_1.11.0/FB15K_20_400_$1/ -c $2 -f $3 -l $4 | tee FB15K_20_400_$1.log
+    mv FB15K_20_400_$1.log embeddings/tf-gpu_1.11.0/FB15K_20_400_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_20_600/ embeddings/tf-gpu_1.11.0/FB15K_20_600_$1/ -c $2 -f $3 -l $4 | tee FB15K_20_600_$1.log
+    mv FB15K_20_600_$1.log embeddings/tf-gpu_1.11.0/FB15K_20_600_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_20_800/ embeddings/tf-gpu_1.11.0/FB15K_20_800_$1/ -c $2 -f $3 -l $4 | tee FB15K_20_800_$1.log
+    mv FB15K_20_800_$1.log embeddings/tf-gpu_1.11.0/FB15K_20_800_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_20_1000/ embeddings/tf-gpu_1.11.0/FB15K_20_1000_$1/ -c $2 -f $3 -l $4 | tee FB15K_20_1000_$1.log
+    mv FB15K_20_1000_$1.log embeddings/tf-gpu_1.11.0/FB15K_20_1000_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_20_1200/ embeddings/tf-gpu_1.11.0/FB15K_20_1200_$1/ -c $2 -f $3 -l $4 | tee FB15K_20_1200_$1.log
+    mv FB15K_20_1200_$1.log embeddings/tf-gpu_1.11.0/FB15K_20_1200_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_20_1400/ embeddings/tf-gpu_1.11.0/FB15K_20_1400_$1/ -c $2 -f $3 -l $4 | tee FB15K_20_1400_$1.log
+    mv FB15K_20_1400_$1.log embeddings/tf-gpu_1.11.0/FB15K_20_1400_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_20_1600/ embeddings/tf-gpu_1.11.0/FB15K_20_1600_$1/ -c $2 -f $3 -l $4 | tee FB15K_20_1600_$1.log
+    mv FB15K_20_1600_$1.log embeddings/tf-gpu_1.11.0/FB15K_20_1600_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_20_1800/ embeddings/tf-gpu_1.11.0/FB15K_20_1800_$1/ -c $2 -f $3 -l $4 | tee FB15K_20_1800_$1.log
+    mv FB15K_20_1800_$1.log embeddings/tf-gpu_1.11.0/FB15K_20_1800_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_20_2000/ embeddings/tf-gpu_1.11.0/FB15K_20_2000_$1/ -c $2 -f $3 -l $4 | tee FB15K_20_2000_$1.log
+    mv FB15K_20_2000_$1.log embeddings/tf-gpu_1.11.0/FB15K_20_2000_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_30_200/ embeddings/tf-gpu_1.11.0/FB15K_30_200_$1/ -c $2 -f $3 -l $4 | tee FB15K_30_200_$1.log
+    mv FB15K_30_200_$1.log embeddings/tf-gpu_1.11.0/FB15K_30_200_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_30_400/ embeddings/tf-gpu_1.11.0/FB15K_30_400_$1/ -c $2 -f $3 -l $4 | tee FB15K_30_400_$1.log
+    mv FB15K_30_400_$1.log embeddings/tf-gpu_1.11.0/FB15K_30_400_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_30_600/ embeddings/tf-gpu_1.11.0/FB15K_30_600_$1/ -c $2 -f $3 -l $4 | tee FB15K_30_600_$1.log
+    mv FB15K_30_600_$1.log embeddings/tf-gpu_1.11.0/FB15K_30_600_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_30_800/ embeddings/tf-gpu_1.11.0/FB15K_30_800_$1/ -c $2 -f $3 -l $4 | tee FB15K_30_800_$1.log
+    mv FB15K_30_800_$1.log embeddings/tf-gpu_1.11.0/FB15K_30_800_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_30_1000/ embeddings/tf-gpu_1.11.0/FB15K_30_1000_$1/ -c $2 -f $3 -l $4 | tee FB15K_30_1000_$1.log
+    mv FB15K_30_1000_$1.log embeddings/tf-gpu_1.11.0/FB15K_30_1000_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_30_1200/ embeddings/tf-gpu_1.11.0/FB15K_30_1200_$1/ -c $2 -f $3 -l $4 | tee FB15K_30_1200_$1.log
+    mv FB15K_30_1200_$1.log embeddings/tf-gpu_1.11.0/FB15K_30_1200_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_30_1400/ embeddings/tf-gpu_1.11.0/FB15K_30_1400_$1/ -c $2 -f $3 -l $4 | tee FB15K_30_1400_$1.log
+    mv FB15K_30_1400_$1.log embeddings/tf-gpu_1.11.0/FB15K_30_1400_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_30_1600/ embeddings/tf-gpu_1.11.0/FB15K_30_1600_$1/ -c $2 -f $3 -l $4 | tee FB15K_30_1600_$1.log
+    mv FB15K_30_1600_$1.log embeddings/tf-gpu_1.11.0/FB15K_30_1600_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_30_1800/ embeddings/tf-gpu_1.11.0/FB15K_30_1800_$1/ -c $2 -f $3 -l $4 | tee FB15K_30_1800_$1.log
+    mv FB15K_30_1800_$1.log embeddings/tf-gpu_1.11.0/FB15K_30_1800_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_30_2000/ embeddings/tf-gpu_1.11.0/FB15K_30_2000_$1/ -c $2 -f $3 -l $4 | tee FB15K_30_2000_$1.log
+    mv FB15K_30_2000_$1.log embeddings/tf-gpu_1.11.0/FB15K_30_2000_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_40_200/ embeddings/tf-gpu_1.11.0/FB15K_40_200_$1/ -c $2 -f $3 -l $4 | tee FB15K_40_200_$1.log
+    mv FB15K_40_200_$1.log embeddings/tf-gpu_1.11.0/FB15K_40_200_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_40_400/ embeddings/tf-gpu_1.11.0/FB15K_40_400_$1/ -c $2 -f $3 -l $4 | tee FB15K_40_400_$1.log
+    mv FB15K_40_400_$1.log embeddings/tf-gpu_1.11.0/FB15K_40_400_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_40_600/ embeddings/tf-gpu_1.11.0/FB15K_40_600_$1/ -c $2 -f $3 -l $4 | tee FB15K_40_600_$1.log
+    mv FB15K_40_600_$1.log embeddings/tf-gpu_1.11.0/FB15K_40_600_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_40_800/ embeddings/tf-gpu_1.11.0/FB15K_40_800_$1/ -c $2 -f $3 -l $4 | tee FB15K_40_800_$1.log
+    mv FB15K_40_800_$1.log embeddings/tf-gpu_1.11.0/FB15K_40_800_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_40_1000/ embeddings/tf-gpu_1.11.0/FB15K_40_1000_$1/ -c $2 -f $3 -l $4 | tee FB15K_40_1000_$1.log
+    mv FB15K_40_1000_$1.log embeddings/tf-gpu_1.11.0/FB15K_40_1000_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_40_1200/ embeddings/tf-gpu_1.11.0/FB15K_40_1200_$1/ -c $2 -f $3 -l $4 | tee FB15K_40_1200_$1.log
+    mv FB15K_40_1200_$1.log embeddings/tf-gpu_1.11.0/FB15K_40_1200_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_40_1400/ embeddings/tf-gpu_1.11.0/FB15K_40_1400_$1/ -c $2 -f $3 -l $4 | tee FB15K_40_1400_$1.log
+    mv FB15K_40_1400_$1.log embeddings/tf-gpu_1.11.0/FB15K_40_1400_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_40_1600/ embeddings/tf-gpu_1.11.0/FB15K_40_1600_$1/ -c $2 -f $3 -l $4 | tee FB15K_40_1600_$1.log
+    mv FB15K_40_1600_$1.log embeddings/tf-gpu_1.11.0/FB15K_40_1600_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_40_1800/ embeddings/tf-gpu_1.11.0/FB15K_40_1800_$1/ -c $2 -f $3 -l $4 | tee FB15K_40_1800_$1.log
+    mv FB15K_40_1800_$1.log embeddings/tf-gpu_1.11.0/FB15K_40_1800_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_40_2000/ embeddings/tf-gpu_1.11.0/FB15K_40_2000_$1/ -c $2 -f $3 -l $4 | tee FB15K_40_2000_$1.log
+    mv FB15K_40_2000_$1.log embeddings/tf-gpu_1.11.0/FB15K_40_2000_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_50_200/ embeddings/tf-gpu_1.11.0/FB15K_50_200_$1/ -c $2 -f $3 -l $4 | tee FB15K_50_200_$1.log
+    mv FB15K_50_200_$1.log embeddings/tf-gpu_1.11.0/FB15K_50_200_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_50_400/ embeddings/tf-gpu_1.11.0/FB15K_50_400_$1/ -c $2 -f $3 -l $4 | tee FB15K_50_400_$1.log
+    mv FB15K_50_400_$1.log embeddings/tf-gpu_1.11.0/FB15K_50_400_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_50_600/ embeddings/tf-gpu_1.11.0/FB15K_50_600_$1/ -c $2 -f $3 -l $4 | tee FB15K_50_600_$1.log
+    mv FB15K_50_600_$1.log embeddings/tf-gpu_1.11.0/FB15K_50_600_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_50_800/ embeddings/tf-gpu_1.11.0/FB15K_50_800_$1/ -c $2 -f $3 -l $4 | tee FB15K_50_800_$1.log
+    mv FB15K_50_800_$1.log embeddings/tf-gpu_1.11.0/FB15K_50_800_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_50_1000/ embeddings/tf-gpu_1.11.0/FB15K_50_1000_$1/ -c $2 -f $3 -l $4 | tee FB15K_50_1000_$1.log
+    mv FB15K_50_1000_$1.log embeddings/tf-gpu_1.11.0/FB15K_50_1000_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_50_1200/ embeddings/tf-gpu_1.11.0/FB15K_50_1200_$1/ -c $2 -f $3 -l $4 | tee FB15K_50_1200_$1.log
+    mv FB15K_50_1200_$1.log embeddings/tf-gpu_1.11.0/FB15K_50_1200_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_50_1400/ embeddings/tf-gpu_1.11.0/FB15K_50_1400_$1/ -c $2 -f $3 -l $4 | tee FB15K_50_1400_$1.log
+    mv FB15K_50_1400_$1.log embeddings/tf-gpu_1.11.0/FB15K_50_1400_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_50_1600/ embeddings/tf-gpu_1.11.0/FB15K_50_1600_$1/ -c $2 -f $3 -l $4 | tee FB15K_50_1600_$1.log
+    mv FB15K_50_1600_$1.log embeddings/tf-gpu_1.11.0/FB15K_50_1600_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_50_1800/ embeddings/tf-gpu_1.11.0/FB15K_50_1800_$1/ -c $2 -f $3 -l $4 | tee FB15K_50_1800_$1.log
+    mv FB15K_50_1800_$1.log embeddings/tf-gpu_1.11.0/FB15K_50_1800_$1/.
+    python3 -u -m train_embedding $1 benchmarks/FB15K_50_2000/ embeddings/tf-gpu_1.11.0/FB15K_50_2000_$1/ -c $2 -f $3 -l $4 | tee FB15K_50_2000_$1.log
+    mv FB15K_50_2000_$1.log embeddings/tf-gpu_1.11.0/FB15K_50_2000_$1/.
+fi
+

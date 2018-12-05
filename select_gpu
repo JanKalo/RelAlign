@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if [ "$0" != "/bin/bash" ] || [ -z "$1" ]
+then
+    echo "Usage:"
+    echo "source ./select_gpu GPU_ID"
+    echo "OR"
+    echo ". ./select_gpu GPU_ID"
+    echo ""
+    echo "Special Values:"
+    echo "GPU_ID -1 --- Use ALL GPUs"
+    echo "GPU_ID -2 --- Use NO GPU"
+elif [ "$1" == "-1" ]
+then
+    unset CUDA_VISIBLE_DEVICES
+    echo "Using ALL GPUs"
+elif [ "$1" == "-2" ]
+then
+    export CUDA_VISIBLE_DEVICES=
+    echo "Using NO GPU"
+else
+    export CUDA_VISIBLE_DEVICES=$1
+    echo "Using GPU $1"
+fi
+
