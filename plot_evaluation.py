@@ -72,7 +72,8 @@ def plot_evaluation(file_name, xlabel, ylabel, title, dynamic_scale=False, **val
     plt.legend(loc = "upper right")
     plt.savefig(file_name)
 
-def plot_experiment_evaluation(experiment_dir_without_model_suffix, baseline_fn=None):
+def plot_experiment_evaluation(experiment_dir_without_model_suffix, \
+        dynamic_scale=False, print_title=False, baseline_fn=None):
     def read_evaluation(file_name):
         evaluation_file = open(file_name, "r")
         values = list(map(lambda x: x.split(), evaluation_file.readlines()))
@@ -110,7 +111,8 @@ def plot_experiment_evaluation(experiment_dir_without_model_suffix, baseline_fn=
     analogy_values = read_evaluation(os.path.join(analogy_fn, \
             "evaluation", "evaluation_class_l1.txt")) if analogy else None
     file_name = os.path.join(dirname, basename + "_l1.pdf")
-    title = basename + ": Evaluation (L1-norm distance)"
+    title = basename + ": Evaluation (L1-norm distance)" \
+            if print_title else None
     values_by_model = {}
     if rescal:
         values_by_model["rescal"] = rescal_values
@@ -124,7 +126,7 @@ def plot_experiment_evaluation(experiment_dir_without_model_suffix, baseline_fn=
         values_by_model["analogy"] = analogy_values
     if baseline:
         values_by_model["baseline"] = baseline_values
-    plot_evaluation(file_name, "recall", "precision", title, **values_by_model)
+    plot_evaluation(file_name, "RECALL", "PRECISION", title, dynamic_scale, **values_by_model)
 
     # cosine similarity plot
     rescal_values = read_evaluation(os.path.join(rescal_fn, \
@@ -138,7 +140,8 @@ def plot_experiment_evaluation(experiment_dir_without_model_suffix, baseline_fn=
     analogy_values = read_evaluation(os.path.join(analogy_fn, \
             "evaluation", "evaluation_class_cos.txt")) if analogy else None
     file_name = os.path.join(dirname, basename + "_cos.pdf")
-    title = basename + ": Evaluation (cosine similarity)"
+    title = basename + ": Evaluation (cosine similarity)" \
+            if print_title else None
     values_by_model = {}
     if rescal:
         values_by_model["rescal"] = rescal_values
@@ -152,9 +155,9 @@ def plot_experiment_evaluation(experiment_dir_without_model_suffix, baseline_fn=
         values_by_model["analogy"] = analogy_values
     if baseline:
         values_by_model["baseline"] = baseline_values
-    plot_evaluation(file_name, "recall", "precision", title, **values_by_model)
+    plot_evaluation(file_name, "RECALL", "PRECISION", title, dynamic_scale, **values_by_model)
 
-def plot_fb15k_evaluation():
+def plot_fb15k_evaluation(dynamic_scale=False, print_title=False):
     # for every fb15k embedding
     fb15k_names = "FB15K_{0}_{1}"
     experiments_fn = "experiments/tf-gpu_1.11.0/"
@@ -163,7 +166,8 @@ def plot_fb15k_evaluation():
     for percentage in percentages:
         for min_occurence in min_occurences:
             fb15k_name = fb15k_names.format(percentage, min_occurence)
-            plot_experiment_evaluation(os.path.join(experiments_fn, fb15k_name))
+            plot_experiment_evaluation(os.path.join(experiments_fn, fb15k_name), \
+                    dynamic_scale, print_title)
 
 def main():
     # parse arguments
@@ -180,16 +184,21 @@ def main():
     parser.add_argument("-b", "--baseline", type=str, default=None, \
             help="An optional baseline evaluation file to add to the plots" \
             + " of a specified experiment (ignored with -f) (Default: None)")
+    parser.add_argument("-d", "--dynamic_scale", action="store_true", default=False, \
+            help="Scale plots dynamically by values (Default: False)")
+    parser.add_argument("-t", "--print-title", action="store_true", default=False, \
+            help="Print titles in plots (Default: False)")
     args = parser.parse_args()
 
     # plot for experiment if argument specified,
     # else just plot for fb15k if -f specified
     if args.fb15k_analysis:
         print("Plotting for all FB15K experiments")
-        plot_fb15k_evaluation()
+        plot_fb15k_evaluation(args.dynamic_scale, args.print_title)
     elif args.experiment:
         print("Plotting for " + args.experiment)
-        plot_experiment_evaluation(args.experiment, args.baseline)
+        plot_experiment_evaluation(args.experiment, \
+                args.dynamic_scale, args.print_title, args.baseline)
 
 if __name__ == "__main__":
     main()
