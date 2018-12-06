@@ -138,7 +138,7 @@ def plot_experiment_evaluation(experiment_dir_without_model_suffix, baseline_fn=
     analogy_values = read_evaluation(os.path.join(analogy_fn, \
             "evaluation", "evaluation_class_cos.txt")) if analogy else None
     file_name = os.path.join(dirname, basename + "_cos.pdf")
-    title = basename + ": Evaluation (L1-norm distance)"
+    title = basename + ": Evaluation (cosine similarity)"
     values_by_model = {}
     if rescal:
         values_by_model["rescal"] = rescal_values
