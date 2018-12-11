@@ -88,3 +88,7 @@ This will look for all experiment directories of FB15K (i.e. *experiments/FB15K\
 
 This Bash-script will select the GPU(s) to use for training.
 
+### baseline.py
+
+This script calculates the baseline precision-recall values.
+
