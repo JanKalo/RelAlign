@@ -16,13 +16,15 @@ It was used with Python2.7 but it should also work with Python3.
 
 Example usage for generating a benchmark with validation and test triples
 (80% for training, 10% each for validation and test):
-```
-python -m map\_input flat_triple_file.nt 1
+
+```shell
+$ python -m map_input flat_triple_file.nt 1
 ```
 
 Example usage for generating a benchmark without validation and test triples:
-```
-python -m map\_input flat_triple_file.nt 0
+
+```shell
+$ python -m map_input flat_triple_file.nt 0
 ```
 
 The benchmark files will be stored in the same directory from where the script was executed.
@@ -32,7 +34,9 @@ The benchmark files will be stored in the same directory from where the script w
 This script injects synonyms into an existing benchmark.
 
 Usage:
-```
+
+```shell
+$ python3 -m synonym_inject -h
 usage: synonym_inject.py [-h] [-p PERCENTAGE_PER_RELATION]
                          [-o MIN_RELATION_OCCURENCE]
                          [-f {inject_synonym_1,inject_synonym_2}]
@@ -54,8 +58,8 @@ optional arguments:
                           The injection func to use (Default: inject_synonym_1)
 ```
 
-INPUT\_BENCHMARK is the directory of the target benchmark.
-The new benchmark will be saved in the same directory where INPUT\_BENCHMARK is located.
+`INPUT_BENCHMARK` is the directory of the target benchmark.
+The new benchmark will be saved in the same directory where `INPUT_BENCHMARK` is located.
 
 ## Our benchmarks
 
