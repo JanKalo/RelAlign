@@ -1,26 +1,42 @@
-#!/usr/bin/python -u
-
 import numpy as np
 import pandas as pd
 import sys
+import os
+from argparse import ArgumentParser
 
-# opens files and reads contents from isql output (ignore first 6 rows and last 2 rows)
-def read_triples(triples_fn):
-    sys.stdout.write("Reading Triple lines ... ")
+# opens mapping files like entity2id.txt or relation2id.txt and returns mapping as dict
+def read_mapping(mapping_fn):
+    sys.stdout.write("Reading {0} mapping ... ".format(os.path.basename(mapping_fn)))
     sys.stdout.flush()
-    isql_lines = open(triples_fn, "r").readlines()
-    triple_lines = isql_lines[6:len(isql_lines) - 2]
-    print(str(len(triple_lines)) + " Triple lines")
+    mapping_file = open(mapping_fn, "r")
+    mapping_lines = mapping_file.readlines()
+    mapping_file.close()
+    defined_size = int(mapping_lines[0])
+    mapping_lines = map(lambda x: x.split(), mapping_lines[1:])
+    dict_mapping = dict((x[0], int(x[1])) for x in mapping_lines)
+    if defined_size == len(dict_mapping):
+        print("{0} mappings".format(str(len(dict_mapping))))
+        return dict_mapping
+    else:
+        print("Failure: size mismatch {0} != {1}".format(defined_size, str(len(dict_mapping))))
+        return None
+
+# opens files and reads contents from triples file
+def read_triples(triples_fn):
+    sys.stdout.write("Reading {0} Triple lines ... ".format(os.path.basename(triples_fn)))
+    sys.stdout.flush()
+    triple_file = open(triples_fn, "r")
+    triple_lines = triple_file.readlines()
+    triple_file.close()
+    print("{0} Triple lines".format(str(len(triple_lines))))
     return triple_lines
 
 # map triple lines to dictionaries and triple list
-def map_triple_lines(triple_lines):
+def map_triple_lines(triple_lines, dict_ent=dict(), dict_rel=dict()):
     # prepare for mapping
-    dict_ent = dict()
-    dict_rel = dict()
     list_triples = []
-    num_ent = 0
-    num_rel = 0
+    num_ent = 0 if len(dict_ent) == 0 else max(dict_ent.values()) + 1
+    num_rel = 0 if len(dict_rel) == 0 else max(dict_rel.values()) + 1
     idx_sub = -1
     idx_obj = -1
     idx_rel = -1
@@ -35,7 +51,7 @@ def map_triple_lines(triple_lines):
         # split it and check if it is a triple
         triple = triple_line.split()
         if len(triple) != 3:
-            sys.exit("Failure: Tuple is not a Triple")
+            sys.exit("Failure: Line is not a Triple")
 
         # check if subject is in entities, add if not
         if triple[0] not in dict_ent:
@@ -138,30 +154,51 @@ def save_triple2id(df_triples, file_name = "triple2id.txt"):
     file_triples.close()
     print("Done")
 
-# main method
-if __name__ == "__main__":
-    # get arguments
-    argv = sys.argv[1:]
-    if argv is None or len(argv) < 1 or len(argv) > 2:
-        sys.exit("Usage: ./map_input.py <Triples_ISQL_Output_Log> [ <Generate_Validation_Test_Bool> ]\n\n"
-                + "\t<Triples_ISQL_Output_Log> : Filename to logged ISQL Output (Double Check read Triple lines in this script)\n\n"
-                + "\t<Generate_Validation_Test_Bool> :\n"
-                + "\t\t\t- True / 1 (DEFAULT)\n"
-                + "\t\t\t- False / 0")
-    triples_fn = argv[0]
-    generate_valid_test = True if len(argv) < 2 or "true" in argv[1].lower() or int(argv[1]) == 1 else False
+# main
+def main():
+    # parse arguments
+    parser = ArgumentParser()
+    parser.add_argument("N_TRIPLE_FILE", type=str, \
+            help="The *.nt file to map to the OpenKE benchmark format.")
+    parser.add_argument("-e", "--entity2id-file", type=str, default=None, \
+            help="An optional existing entity2id file, whose existing ids should be used.")
+    parser.add_argument("-r", "--relation2id-file", type=str, default=None, \
+            help="An optional existing relation2id file, whose existing ids should be used.")
+    parser.add_argument("-g", "--generate-test-files", action="store_true", default=False, \
+            help="A flag wether to generate test files (valid2id.txt, test2id.txt) or not (Default: False).")
+    parser.add_argument("-t", "--training-percentage", type=float, default=0.8, \
+            help="The percentage in range (0, 1) of how much triples should be in the training set," \
+            + " only if -g specified (Default: 0.8).")
+    parser.add_argument("-v", "--valid-percentage", type=float, default=0.5, \
+            help="The percentage in range (0, 1) of the REMAINING triples not in the training set," \
+            + " which should be in the validation set (rest goes in test set), only if -g specified (Default: 0.5).")
+    args = parser.parse_args()
+
+    # read mappings if specified
+    dict_ent = None
+    if args.entity2id_file:
+        dict_ent = read_mapping(args.entity2id_file)
+    else:
+        dict_ent = dict()
+    dict_rel = None
+    if args.relation2id_file:
+        dict_rel = read_mapping(args.relation2id_file)
+    else:
+        dict_rel = dict()
 
     # read triples
-    triple_lines = read_triples(triples_fn)
+    triple_lines = read_triples(args.N_TRIPLE_FILE)
 
     # map triple lines
-    dict_ent, dict_rel, list_triples = map_triple_lines(triple_lines)
+    dict_ent, dict_rel, list_triples = map_triple_lines(triple_lines, dict_ent, dict_rel)
 
     # convert to pandas series and dataframe
     srs_ent, srs_rel, df_triples = convert_to_pandas(dict_ent, dict_rel, list_triples)
 
     # partition data
-    df_train, df_valid, df_test = partition_data(df_triples, generate_valid_test, 0.8, 0.5)
+    df_train, df_valid, df_test = partition_data(df_triples, args.generate_test_files, \
+            args.training_percentage, \
+            args.valid_percentage)
 
     # save entities and relations
     save_element2id(srs_ent, "entity2id.txt")
@@ -169,7 +206,10 @@ if __name__ == "__main__":
 
     # save training data and (if specified) validation and test data
     save_triple2id(df_train, "train2id.txt")
-    if generate_valid_test:
+    if args.generate_test_files:
         save_triple2id(df_valid, "valid2id.txt")
         save_triple2id(df_test, "test2id.txt")
+
+if __name__ == "__main__":
+    main()
 
