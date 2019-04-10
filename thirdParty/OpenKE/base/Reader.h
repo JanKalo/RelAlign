@@ -166,9 +166,8 @@ void importTestFiles() {
     printf("The total of test triples is %ld.\n", testTotal);
 }
 
-// Philipp Ehler 2018-03-19
+// added 2018-03-19
 // ---
-
 extern "C"
 void getTripleList(INT *ph, INT *pt, INT *pr) {
     for (INT i = 0; i < tripleTotal; i++) {
@@ -177,7 +176,6 @@ void getTripleList(INT *ph, INT *pt, INT *pr) {
         pr[i] = tripleList[i].r;
     }
 }
-
 // ---
 
 #endif

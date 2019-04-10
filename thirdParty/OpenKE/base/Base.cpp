@@ -42,12 +42,10 @@ void randReset();
 extern "C"
 void importTrainFiles();
 
-// Philipp Ehler 2018-03-19
+// added 2018-03-19
 // ---
-
 extern "C"
 void getTripleList(INT *ph, INT *pt, INT *pr);
-
 // ---
 
 struct Parameter {

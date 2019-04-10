@@ -50,7 +50,7 @@ def map_triple_lines(triple_lines, dict_ent=dict(), dict_rel=dict()):
     for triple_line in triple_lines:
         # split it and check if it is a triple
         triple = triple_line.split()
-        if len(triple) != 3:
+        if not (len(triple) == 4 and triple[3] == '.') and len(triple) != 3:
             sys.exit("Failure: Line is not a Triple")
 
         # check if subject is in entities, add if not

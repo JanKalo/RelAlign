@@ -13,7 +13,7 @@ This is our repository containing all tools and scripts used for:
 - Python3
 - Bash (for some scripts)
 
-## Files
+## Python Files
 
 ### embedding.py
 
@@ -50,10 +50,6 @@ For more options, take a look at:
 $ python3 -m train_embedding -h
 ```
 
-### train\_fb15k\_by\_model
-
-This Bash-script will simply train multiple FB15K benchmarks.
-
 ### synonym\_analysis.py
 
 This script will start the detection of synonymous relations.
@@ -74,10 +70,6 @@ For more options, take a look at:
 $ python3 -m synonym_analysis -h
 ```
 
-### analyse\_fb15k\_by\_model
-
-This Bash-script will simply analyse multiple FB15K embeddings.
-
 ### plot\_evaluation.py
 
 This script is used to plot precision-recall diagrams summarizing precision and recall for every model of an embedding.
@@ -90,13 +82,21 @@ $ python3 -m plot_evaluation -e experiments/FB15K
 
 This will look for all experiment directories of FB15K (i.e. `experiments/FB15K_transe/`, `experiments/FB15K_transh/`, ...) and summarize their precision-recall plots into `experiments/FB15K_l1.pdf` and `experiments/FB15K_cos.pdf`.
 
+### baseline.py
+
+This script calculates the baseline precision-recall values.
+
+### baseline\_evaluation.py
+
+TODO
+
+## Bash Files
+
 ### select\_gpu
 
 This Bash-script will select the GPU(s) to use for training.
 
-### baseline.py
 
-This script calculates the baseline precision-recall values.
 
 ## Experiments
 

@@ -1,5 +1,3 @@
-#!/usr/bin/python -u
-
 # force matplotlib agg backend
 import matplotlib
 matplotlib.use("agg")
@@ -47,14 +45,24 @@ def get_transe_delta_r(embedding_params, embedding_dimension, rel_idx):
     return delta_r
 
 def get_transh_delta_r(embedding_params, embedding_dimension, rel_idx):
+    # ---- OLD ----
     # get vector embedding d_r_rel_idx from "rel_embeddings" parameter
     # get vector embedding w_r_rel_idx from "normal_vectors" parameter
-    d_r_rel_idx = embedding_params["rel_embeddings"][rel_idx]
-    w_r_rel_idx = embedding_params["normal_vectors"][rel_idx]
+    #d_r_rel_idx = embedding_params["rel_embeddings"][rel_idx]
+    #w_r_rel_idx = embedding_params["normal_vectors"][rel_idx]
 
+    # ---- OLD ----
     # d_r_rel_idx projected to w_r_rel_idx hyperplane is the measure
-    delta_r = np.subtract(d_r_rel_idx,
-            np.multiply(np.sum(np.multiply(d_r_rel_idx, w_r_rel_idx)), w_r_rel_idx))
+    #delta_r = np.subtract(d_r_rel_idx,
+    #        np.multiply(np.sum(np.multiply(d_r_rel_idx, w_r_rel_idx)), w_r_rel_idx))
+    # -------------
+
+    # d_r_rel_idx concatenated with w_r_rel_idx is the measure
+    #delta_r = np.concatenate((d_r_rel_idx, w_r_rel_idx))
+    # -------------
+
+    # measure is the same as in TransE, even stored in the same parameter
+    delta_r = get_transe_delta_r(embedding_params, embedding_dimension, rel_idx)
     return delta_r
 
 def get_transr_delta_r(embedding_params, embedding_dimension, rel_idx):
@@ -75,13 +83,53 @@ def get_transd_delta_r(embedding_params, embedding_dimension, rel_idx):
     r_rel_idx = embedding_params["rel_embeddings"][rel_idx]
     r_p_rel_idx = embedding_params["rel_transfer"][rel_idx]
 
+    # ---- OLD ----
     # calculate projection matrix for r_rel_idx projection
     #M_r_rel_idx = np.add(np.multiply(r_p_rel_idx, np.array([[1] * embedding_dimension])), np.identity(embedding_dimension))
 
     # r_rel_idx projected with M_r_rel_idx is the measure
     #delta_r = np.matmul(M_r_rel_idx, r_rel_idx)
-    delta_r = np.add(r_rel_idx,
-            np.multiply(np.sum(r_rel_idx), r_p_rel_idx))
+    #delta_r = np.add(r_rel_idx,
+    #        np.multiply(np.sum(r_rel_idx), r_p_rel_idx))
+    # -------------
+
+    # r_rel_idx concatenated with r_p_rel_idx is the measure
+    delta_r = np.concatenate((r_rel_idx, r_p_rel_idx))
+    return delta_r
+
+def get_distmult_delta_r(embedding_params, embedding_dimension, rel_idx):
+    # measure is the same as in TransE, even stored in the same parameter
+    delta_r = get_transe_delta_r(embedding_params, embedding_dimension, rel_idx)
+    return delta_r
+
+def get_hole_delta_r(embedding_params, embedding_dimension, rel_idx):
+    # measure is the same as in TransE, even stored in the same parameter
+    delta_r = get_transe_delta_r(embedding_params, embedding_dimension, rel_idx)
+    return delta_r
+
+def get_complex_delta_r(embedding_params, embedding_dimension, rel_idx):
+    # get real part vector embedding re_rel_idx from "rel_re_embeddings" parameter
+    re_rel_idx = embedding_params["rel_re_embeddings"][rel_idx]
+
+    # get imaginary part vector embedding ri_rel_idx from "rel_im_embeddings" parameter
+    ri_rel_idx = embedding_params["rel_im_embeddings"][rel_idx]
+
+    # real part concatenated with imaginary part is the measure
+    delta_r = np.concatenate((re_rel_idx, ri_rel_idx))
+    return delta_r
+
+def get_analogy_delta_r(embedding_params, embedding_dimension, rel_idx):
+    # get vector embedding r_rel_idx from "rel_embeddings" parameter
+    r_rel_idx = embedding_params["rel_embeddings"][rel_idx]
+
+    # get real part vector embedding re_rel_idx from "rel_re_embeddings" parameter
+    re_rel_idx = embedding_params["rel_re_embeddings"][rel_idx]
+
+    # get imaginary part vector embedding ri_rel_idx from "rel_im_embeddings" parameter
+    ri_rel_idx = embedding_params["rel_im_embeddings"][rel_idx]
+
+    # all of them concatenated is the measure
+    delta_r = np.concatenate((r_rel_idx, re_rel_idx, ri_rel_idx))
     return delta_r
 
 ##############################
@@ -194,7 +242,7 @@ def z_score_threshold_chebyshevs_ineq(max_population_percent):
     return np.sqrt(1 / (max_population_percent / 2))
 
 def classification(df_rel_mat_similarity, max_population_percent, left_side=True):
-    classified_synonyms = []
+    classified_synonyms = set()
     z_score_threshold = z_score_threshold_chebyshevs_ineq(max_population_percent)
     for rel_i, series_relation_dist in df_rel_mat_similarity.iterrows():
         rel_i = int(rel_i)
@@ -204,79 +252,69 @@ def classification(df_rel_mat_similarity, max_population_percent, left_side=True
                 z_score(series_relation_dist, rel_i_dist_mean, rel_i_dist_std) < -z_score_threshold if left_side else \
                         z_score(series_relation_dist, rel_i_dist_mean, rel_i_dist_std) > z_score_threshold]
         for rel_j, observed_dist_ij in series_classified.iteritems():
-            rel_j = int(rel_j)
-            if rel_i != rel_j \
-                and [rel_i, rel_j] not in classified_synonyms \
-                and [rel_j, rel_i] not in classified_synonyms:
-                    classified_synonyms.append([rel_i, rel_j])
+            pair = frozenset([rel_i, int(rel_j)])
+            if len(pair) == 2 and pair not in classified_synonyms:
+                classified_synonyms.add(pair)
     return classified_synonyms
 
+# unused
 def classification_static(df_rel_mat_similarity, cos_value_threshold):
-    classified_synonyms = []
+    classified_synonyms = set()
     for rel_i, series_relation_dist in df_rel_mat_similarity.iterrows():
         rel_i = int(rel_i)
         series_classified = series_relation_dist[series_relation_dist > cos_value_threshold]
         for rel_j, observed_dist_ij in series_classified.iteritems():
-            rel_j = int(rel_j)
-            if rel_i != rel_j \
-                and [rel_i, rel_j] not in classified_synonyms \
-                and [rel_j, rel_i] not in classified_synonyms:
-                    classified_synonyms.append([rel_i, rel_j])
+            pair = frozenset([rel_i, int(rel_j)])
+            if len(pair) == 2 and pair not in classified_synonyms:
+                classified_synonyms.add(pair)
     return classified_synonyms
 
 def nearest_neighbors(df_rel_mat_similarity, left_side=True):
-    nearest_neighbors = []
+    nearest_neighbors = set()
     for rel_i, series_relation_dist in df_rel_mat_similarity.iterrows():
         rel_i = int(rel_i)
         rel_j = int(series_relation_dist.sort_values().index[1 if left_side else -2])
-        if rel_i != rel_j \
-            and [rel_i, rel_j] not in nearest_neighbors \
-            and [rel_j, rel_i] not in nearest_neighbors:
-                nearest_neighbors.append([rel_i, rel_j])
+        pair = frozenset([rel_i, int(rel_j)])
+        if len(pair) == 2 and pair not in nearest_neighbors:
+            nearest_neighbors.add(pair)
     return nearest_neighbors
 
 ####################################################################################
 # CALCULATE PRECISION / RECALL BETWEEN CLASSIFIED SYNONYMS AND GROUND-TRUTH SYNONYMS
 ####################################################################################
 
-def save_synonyms_list(synonyms_id_list, file_name_without_extension, embedding):
+def save_synonyms_set(synonyms_id_set, file_name_without_extension, embedding):
     # save ids
     synonyms_id_file = open(file_name_without_extension + "_ids.txt", "w")
-    synonyms_id_file.write("%d\n" % len(synonyms_id_list))
-    synonyms_id_file.writelines(map(lambda x: str(x[0]) + "\t" + str(x[1]) + "\n", synonyms_id_list))
+    synonyms_id_file.write("%d\n" % len(synonyms_id_set))
+    synonyms_id_file.writelines(map(lambda x: str(sorted(x)[0]) + "\t" + str(sorted(x)[1]) + "\n", list(synonyms_id_set)))
     synonyms_id_file.close()
     # if we have an embedding instance, also save uris as separate file
     if embedding:
         # create synonyms list with uris
         synonyms_uri_list = list(map(lambda x: \
-                [embedding.lookup_relation(x[0]), embedding.lookup_relation(x[1])], \
-                synonyms_id_list))
+                [embedding.lookup_relation(sorted(x)[0]), embedding.lookup_relation(sorted(x)[1])], \
+                list(synonyms_id_set)))
         # save uris
         synonyms_uri_file = open(file_name_without_extension + "_uris.txt", "w")
         synonyms_uri_file.write("%d\n" % len(synonyms_uri_list))
         synonyms_uri_file.writelines(map(lambda x: str(x[0]) + "\t" + str(x[1]) + "\n", synonyms_uri_list))
         synonyms_uri_file.close()
 
-def get_synonyms_list(synonyms_fn):
+def get_synonyms_set(synonyms_fn):
     synonyms_file = open(synonyms_fn, "r")
     synonyms_lines = synonyms_file.readlines()[1:]
-    synonyms_list = list(map(lambda x: list(map(lambda y: int(y), x.split())), synonyms_lines))
+    synonyms_set = set(map(lambda x: frozenset(map(lambda y: int(y), x.split())), synonyms_lines))
     synonyms_file.close()
-    return synonyms_list
+    return synonyms_set
 
-def calc_true_positives(classified_synonyms_list, ground_truth_synonyms_list):
-    num_true_positives = 0
-    for i in range(len(classified_synonyms_list)):
-        x = [classified_synonyms_list[i][0], classified_synonyms_list[i][1]]
-        y = [classified_synonyms_list[i][1], classified_synonyms_list[i][0]]
-        if x in ground_truth_synonyms_list or y in ground_truth_synonyms_list:
-            num_true_positives += 1
-    return num_true_positives
+def calc_true_positives(classified_synonyms_set, ground_truth_synonyms_set):
+    return set(filter(lambda x: x in ground_truth_synonyms_set, classified_synonyms_set))
 
-def calc_precision_recall(classified_synonyms_list, ground_truth_synonyms_list):
-    num_true_positives = calc_true_positives(classified_synonyms_list, ground_truth_synonyms_list)
-    num_classified_positives = len(classified_synonyms_list)
-    num_ground_truth_positives = len(ground_truth_synonyms_list)
+def calc_precision_recall(classified_synonyms_set, ground_truth_synonyms_set):
+    num_true_positives = len(calc_true_positives(classified_synonyms_set, ground_truth_synonyms_set))
+    num_classified_positives = len(classified_synonyms_set)
+    num_ground_truth_positives = len(ground_truth_synonyms_set)
     precision = (float(num_true_positives) / float(num_classified_positives)) if num_classified_positives != 0 else 0.0
     recall = (float(num_true_positives) / float(num_ground_truth_positives)) if num_ground_truth_positives != 0 else 0.0
     return precision, recall
@@ -323,10 +361,10 @@ def analyse_embedding(embedding, output_dir, fn_synonyms_id, func_delta_r=None):
     plots_dir = os.path.join(output_dir, "plots")
     
     # set default names
-    rel_mat_similarity_name = "df_rel_mat_similarity_%s"
-    rel_nearest_neighbors_name = "df_rel_nearest_neighbors_%s"
-    nn_name = "nn_%s"
-    class_name = "class_%s_percent_%s"
+    rel_mat_similarity_name = "df_rel_mat_similarity_{0}"
+    rel_nearest_neighbors_name = "df_rel_nearest_neighbors_{0}"
+    nn_name = "nn_{0}"
+    class_name = "class_{0:.2f}_percent_{1}"
     
     # get modelspecific func
     if not func_delta_r:
@@ -335,47 +373,97 @@ def analyse_embedding(embedding, output_dir, fn_synonyms_id, func_delta_r=None):
         elif embedding.embedding_model == models.TransE:
             func_delta_r = get_transe_delta_r
         elif embedding.embedding_model == models.TransH:
-            # seems to work better with func_delta_r from transe
-            #func_delta_r = get_transh_delta_r
-            func_delta_r = get_transe_delta_r
+            func_delta_r = get_transh_delta_r
         elif embedding.embedding_model == models.TransR:
             func_delta_r = get_transr_delta_r
         elif embedding.embedding_model == models.TransD:
-            # seems to work better with func_delta_r from transe
-            #func_delta_r = get_transd_delta_r
-            func_delta_r = get_transe_delta_r
+            func_delta_r = get_transd_delta_r
+        elif embedding.embedding_model == models.DistMult:
+            func_delta_r = get_distmult_delta_r
+        elif embedding.embedding_model == models.HolE:
+            func_delta_r = get_hole_delta_r
+        elif embedding.embedding_model == models.ComplEx:
+            func_delta_r = get_complex_delta_r
+        elif embedding.embedding_model == models.Analogy:
+            func_delta_r = get_analogy_delta_r
         else:
             # not implemented yet
             print("func_delta_r not implemented for specified model type.")
             return
     else:
         print("func_delta_r OVERRIDE")
+
+    # SIMILARITY MATRIX L1: check if similarity matrix already exist
+    fn_rel_mat_similarity_l1 = os.path.join(output_dir, rel_mat_similarity_name.format("l1.csv"))
+    if os.path.exists(fn_rel_mat_similarity_l1):
+        # load similarity matrix
+        sys.stdout.write("Reading L1 Similarity Matrix ... ")
+        sys.stdout.flush()
+        df_rel_mat_similarity_l1 = pd.read_csv(fn_rel_mat_similarity_l1, index_col=0, encoding="utf-8")
+        print("Done")
+    else:
+        # calculate similarity matrix
+        df_rel_mat_similarity_l1 = calc_df_rel_mat_similarity(embedding, func_delta_r, norm_DELTA_r, 1)
+        
+        # save calculations as csv in output folder
+        sys.stdout.write("Saving L1 Similarity Matrix ... ")
+        sys.stdout.flush()
+        df_rel_mat_similarity_l1.to_csv(fn_rel_mat_similarity_l1, index=True, encoding="utf-8")
+        print("Done")
     
-    # calculate similarity matrices
-    df_rel_mat_similarity_l1 = calc_df_rel_mat_similarity(embedding, func_delta_r, norm_DELTA_r, 1)
-    df_rel_mat_similarity_cos = calc_df_rel_mat_similarity(embedding, func_delta_r, cos_DELTA_r, 2)
+    # SIMILARITY MATRIX COS: check if similarity matrix already exist
+    fn_rel_mat_similarity_cos = os.path.join(output_dir, rel_mat_similarity_name.format("cos.csv"))
+    if os.path.exists(fn_rel_mat_similarity_cos):
+        # load similarity matrix
+        sys.stdout.write("Reading COS Similarity Matrix ... ")
+        sys.stdout.flush()
+        df_rel_mat_similarity_cos = pd.read_csv(fn_rel_mat_similarity_cos, index_col=0, encoding="utf-8")
+        print("Done")
+    else:
+        # calculate similarity matrix
+        df_rel_mat_similarity_cos = calc_df_rel_mat_similarity(embedding, func_delta_r, cos_DELTA_r, 2)
+        
+        # save calculations as csv in output folder
+        sys.stdout.write("Saving COS Similarity Matrix ... ")
+        sys.stdout.flush()
+        df_rel_mat_similarity_cos.to_csv(fn_rel_mat_similarity_cos, index=True, encoding="utf-8")
+        print("Done")
     
-    # save calculations as csv in output folder
-    sys.stdout.write("Saving calculations ... ")
-    sys.stdout.flush()
-    df_rel_mat_similarity_l1.to_csv(os.path.join(output_dir, rel_mat_similarity_name % "l1.csv"),
-            index = True, encoding = "utf-8")
-    df_rel_mat_similarity_cos.to_csv(os.path.join(output_dir, rel_mat_similarity_name % "cos.csv"),
-            index = True, encoding = "utf-8")
-    print("Done")
-    
-    # getting nearest neighbors dataframes
-    df_rel_nearest_neighbors_l1 = get_df_rel_nearest_neighbors(embedding, df_rel_mat_similarity_l1, True)
-    df_rel_nearest_neighbors_cos = get_df_rel_nearest_neighbors(embedding, df_rel_mat_similarity_cos, False)
-    
-    # save nearest neighbors dataframes
-    sys.stdout.write("Saving nearest neighbors dataframes ... ")
-    sys.stdout.flush()
-    df_rel_nearest_neighbors_l1.to_csv(os.path.join(output_dir, rel_nearest_neighbors_name % "l1.csv"),
-            index = True, encoding = "utf-8")
-    df_rel_nearest_neighbors_cos.to_csv(os.path.join(output_dir, rel_nearest_neighbors_name % "cos.csv"),
-            index = True, encoding = "utf-8")
-    print("Done")
+    # NEAREST NEIGHBORS L1: check if exists
+    fn_rel_nearest_neighbors_l1 = os.path.join(output_dir, rel_nearest_neighbors_name.format("l1.csv"))
+    if os.path.exists(fn_rel_nearest_neighbors_l1):
+        # load
+        sys.stdout.write("Reading L1 nearest neighbors dataframe ... ")
+        sys.stdout.flush()
+        df_rel_nearest_neighbors_l1 = pd.read_csv(fn_rel_nearest_neighbors_l1, index_col=0, encoding="utf-8")
+        print("Done")
+    else:
+        # getting nearest neighbors dataframe
+        df_rel_nearest_neighbors_l1 = get_df_rel_nearest_neighbors(embedding, df_rel_mat_similarity_l1, True)
+        
+        # save nearest neighbors dataframe
+        sys.stdout.write("Saving L1 nearest neighbors dataframe ... ")
+        sys.stdout.flush()
+        df_rel_nearest_neighbors_l1.to_csv(fn_rel_nearest_neighbors_l1, index=True, encoding="utf-8")
+        print("Done")
+
+    # NEAREST NEIGHBORS COS: check if exists
+    fn_rel_nearest_neighbors_cos = os.path.join(output_dir, rel_nearest_neighbors_name.format("cos.csv"))
+    if os.path.exists(fn_rel_nearest_neighbors_cos):
+        # load
+        sys.stdout.write("Reading COS nearest neighbors dataframe ... ")
+        sys.stdout.flush()
+        df_rel_nearest_neighbors_cos = pd.read_csv(fn_rel_nearest_neighbors_cos, index_col=0, encoding="utf-8")
+        print("Done")
+    else:
+        # getting nearest neighbors dataframe
+        df_rel_nearest_neighbors_cos = get_df_rel_nearest_neighbors(embedding, df_rel_mat_similarity_cos, False)
+        
+        # save nearest neighbors dataframe
+        sys.stdout.write("Saving COS nearest neighbors dataframe ... ")
+        sys.stdout.flush()
+        df_rel_nearest_neighbors_cos.to_csv(fn_rel_nearest_neighbors_cos, index=True, encoding="utf-8")
+        print("Done")
 
     # DETECT, EVALUATE AND SAVE SYNONYMS
     strinfo = "\rDetecting, evaluating and saving Synonyms ... "
@@ -392,7 +480,7 @@ def analyse_embedding(embedding, output_dir, fn_synonyms_id, func_delta_r=None):
         evaluation_nn_cos = []
         evaluation_class_l1 = []
         evaluation_class_cos = []
-        synonyms = get_synonyms_list(fn_synonyms_id)
+        synonyms = get_synonyms_set(fn_synonyms_id)
         def precision_recall(l):
             precision, recall = calc_precision_recall(l, synonyms)
             return [precision, recall]
@@ -425,27 +513,41 @@ def analyse_embedding(embedding, output_dir, fn_synonyms_id, func_delta_r=None):
     # nearest neighbors
     nn_l1 = nearest_neighbors(df_rel_mat_similarity_l1, True)
     nn_cos = nearest_neighbors(df_rel_mat_similarity_cos, False)
-    save_synonyms_list(nn_l1, os.path.join(evaluation_dir, nn_name % "l1"), embedding)
-    save_synonyms_list(nn_cos, os.path.join(evaluation_dir, nn_name % "cos"), embedding)
+    save_synonyms_set(nn_l1, os.path.join(evaluation_dir, nn_name.format("l1")), embedding)
+    save_synonyms_set(nn_cos, os.path.join(evaluation_dir, nn_name.format("cos")), embedding)
     if evaluation:
         evaluation_nn_l1.append(precision_recall(nn_l1))
         evaluation_nn_cos.append(precision_recall(nn_cos))
         save_evaluation(evaluation_nn_l1, os.path.join(evaluation_dir, "evaluation_nn_l1.txt"))
         save_evaluation(evaluation_nn_cos, os.path.join(evaluation_dir, "evaluation_nn_cos.txt"))
+
+    # left threshold list (0.1% - 5%, += 0.1%)
+    max_population_percents_left = list(np.linspace(0.1, 5, 50))
+    # mid threshold list (5% - 10%, += 0.2%)
+    max_population_percents_mid = list(np.linspace(5, 20, 76))
+    # right threshold list (10% - 100%, += 1%)
+    max_population_percents_right = list(np.linspace(20, 100, 81))
+    # define our dbpedia threshold list (0.1% - 3%, += 0.1%)
+    # (to reduce manual evaluation overhead)
+    max_population_percents_dbpedia = list(np.linspace(0.1, 5, 50))
+    # combine
+    max_population_percents = max_population_percents_left[:-1] \
+            + max_population_percents_mid[:-1] \
+            + max_population_percents_right
+    #max_population_percents = max_population_percents_dbpedia   # ONLY FOR DBPEDIA EVALUATION
     
     # do for every percent for max_population_percent
-    max_population_percents = list(map(lambda x: x / 100.0, range(1, 31)))
     max_iteration = len(max_population_percents)
     iteration = 0
     for max_population_percent in max_population_percents:
         # calculate synonyms
-        class_l1 = classification(df_rel_mat_similarity_l1, max_population_percent, True)
-        class_cos = classification(df_rel_mat_similarity_cos, max_population_percent, False)
+        class_l1 = classification(df_rel_mat_similarity_l1, max_population_percent * 0.01, True)
+        class_cos = classification(df_rel_mat_similarity_cos, max_population_percent * 0.01, False)
         # save synonyms
-        save_synonyms_list(class_l1, os.path.join(evaluation_dir, \
-                class_name % (int(max_population_percent * 100), "l1")), embedding)
-        save_synonyms_list(class_cos, os.path.join(evaluation_dir, \
-                class_name % (int(max_population_percent * 100), "cos")), embedding)
+        save_synonyms_set(class_l1, os.path.join(evaluation_dir, \
+                class_name.format(max_population_percent, "l1")), embedding)
+        save_synonyms_set(class_cos, os.path.join(evaluation_dir, \
+                class_name.format(max_population_percent, "cos")), embedding)
         # calculate precision and recall
         if evaluation:
             evaluation_class_l1.append(precision_recall(class_l1))
@@ -508,6 +610,14 @@ def main():
             func_delta_r = get_transr_delta_r
         elif args.override_delta == "transd":
             func_delta_r = get_transd_delta_r
+        elif args.override_delta == "distmult":
+            func_delta_r = get_distmult_delta_r
+        elif args.override_delta == "hole":
+            func_delta_r = get_hole_delta_r
+        elif args.override_delta == "complex":
+            func_delta_r = get_complex_delta_r
+        elif args.override_delta == "analogy":
+            func_delta_r = get_analogy_delta_r
         else:
             # not implemented
             print("func_delta_r not implemented for model " + args.override_delta + ".")
