@@ -1,4 +1,4 @@
-# Embedding-driven Relationship Alignment for Large Knowledge Graphs
+# Knowledge Graph Consolidation by Unifying Synonymous Relationships
 
 This is our repository containing all tools and scripts used for:
 
@@ -10,6 +10,7 @@ This is our repository containing all tools and scripts used for:
 ## Dependencies
 
 - [OpenKE](https://github.com/thunlp/OpenKE) (compile library under thirdParty/OpenKE/ first!)
+- Python2 with pyfpgrowth and pyspark (for baseline)
 - Python3
 - Bash (for some scripts)
 
@@ -44,7 +45,7 @@ $ python3 -m train_embedding --epoch-count 1000 --batch-count 10 transh benchmar
 This will load the benchmark located at `benchmarks/FB15K/` into OpenKE and will start training with model type **TransH**.
 The resulting embedding is saved in this directory: `embeddings/FB15K_transh/`
 
-For more options, take a look at:
+For more options, see:
 
 ```shell
 $ python3 -m train_embedding -h
@@ -64,10 +65,41 @@ This will load the **TransH** knowledge embedding located in `embeddings/FB15K_t
 Every output of the detection will be stored in `experiments/FB15K_transh/`.
 Additionally, with the `-g` option, ground-truth data of synonymous relations in the specified benchmark will be loaded (if available) and precision-recall diagrams will be plotted.
 
-For more options, take a look at:
+For more options, see:
 
 ```shell
 $ python3 -m synonym_analysis -h
+```
+
+### baseline.py
+
+This script contains the code for our baseline method to detect synonymous relationships.
+
+Example usage:
+
+```shell
+$ python2 -m baseline benchmarks/FB15K_2000_50/train2id.txt experiments/FB15K_2000_50_baseline/synonyms_minSup_0.02.txt 0.02
+```
+
+The first parameter is the input triples file, the second parameter ist the output file and the third parameter specifies the minimum support value.
+
+### baseline\_evaluation.py
+
+This script calculates the precision-recall values for a given baseline.py output and gold-standard.
+
+Example usage:
+
+```shell
+$ python3 -m baseline_evaluation experiments/FB15K_2000_50_baseline/synonyms_minSup_0.02.txt benchmarks/FB15K_2000_50/synonyms_id.txt
+```
+
+The output is placed in the directory where the baseline.py output is located.
+(In the example above: `experiments/FB15K_2000_50_baseline/`)
+
+For more options, see:
+
+```shell
+$ python3 -m baseline_evaluation -h
 ```
 
 ### plot\_evaluation.py
@@ -82,13 +114,40 @@ $ python3 -m plot_evaluation -e experiments/FB15K
 
 This will look for all experiment directories of FB15K (i.e. `experiments/FB15K_transe/`, `experiments/FB15K_transh/`, ...) and summarize their precision-recall plots into `experiments/FB15K_l1.pdf` and `experiments/FB15K_cos.pdf`.
 
-### baseline.py
+### evaluate\_dbpedia.py
 
-This script calculates the baseline precision-recall values.
+This script performs specifically our dbpedia evaluation (including plotting of precision@top-k diagrams) for a given (manually crafted) gold standard and a baseline.py output.
+This script internally contains the relevant classification files for each model and similarity function we used.
 
-### baseline\_evaluation.py
+Example usage:
 
-TODO
+```shell
+python3 -m evaluate_dbpedia experiments/dbpedia-201610N-1k-filtered_combined_approx_500_correct.txt experiments/dbpedia-201610N-1k-filtered_baseline/synonyms_minSup_0.001_uris.txt
+```
+
+For more options, see:
+
+```shell
+$ python3 -m evaluate_dbpedia -h
+```
+
+### id2uri.py
+
+This script takes as input a file with ID pairs and calculates the corresponding file with URI pairs by looking them up in a given relation2id.txt file.
+
+Example usage:
+
+```shell
+python3 -m id2uri experiments/dbpedia-201610N-1k-filtered_baseline/synonyms_minSup_0.001.txt benchmarks/dbpedia-201610N-1k-filtered/relation2id.txt
+```
+
+The URI pairs file is saved in the same directory as the ID pairs file.
+
+For more options, see:
+
+```shell
+$ python3 -m id2uri -h
+```
 
 ## Bash Files
 
@@ -96,7 +155,18 @@ TODO
 
 This Bash-script will select the GPU(s) to use for training.
 
+### train\_\*.sh
 
+Training scripts for our experiments. Trains embeddings for our benchmarks.
+
+### analyse\_\*.sh
+
+Performs synonym detection for our experiments with our method on each embedding.
+
+### baseline\_\*.sh
+
+Performs synonym detection for our experiments with our baseline method.
+Also plots all results.
 
 ## Experiments
 
