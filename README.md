@@ -122,7 +122,7 @@ This script internally contains the relevant classification files for each model
 Example usage:
 
 ```shell
-python3 -m evaluate_dbpedia experiments/dbpedia-201610N-1k-filtered_combined_approx_500_correct.txt experiments/dbpedia-201610N-1k-filtered_baseline/synonyms_minSup_0.001_uris.txt
+$ python3 -m evaluate_dbpedia experiments/dbpedia-201610N-1k-filtered_combined_approx_500_correct.txt experiments/dbpedia-201610N-1k-filtered_baseline/synonyms_minSup_0.001_uris.txt
 ```
 
 For more options, see:
@@ -138,7 +138,7 @@ This script takes as input a file with ID pairs and calculates the corresponding
 Example usage:
 
 ```shell
-python3 -m id2uri experiments/dbpedia-201610N-1k-filtered_baseline/synonyms_minSup_0.001.txt benchmarks/dbpedia-201610N-1k-filtered/relation2id.txt
+$ python3 -m id2uri experiments/dbpedia-201610N-1k-filtered_baseline/synonyms_minSup_0.001.txt benchmarks/dbpedia-201610N-1k-filtered/relation2id.txt
 ```
 
 The URI pairs file is saved in the same directory as the ID pairs file.
@@ -187,21 +187,7 @@ The script always saves the created synonym pairs in a text file inside the new 
 
 ###### 5.1 Synthetic Synonyms in Freebase
 
-The following commands create four copies of the original FB15K benchmark with:
-
-- synthetic synonyms which randomly replace 10% of the occurences in the triples for relations which occur at least 200 times. (`FB15K_10_200`)
-- synthetic synonyms which randomly replace 50% of the occurences in the triples for relations which occur at least 200 times. (`FB15K_50_200`)
-- synthetic synonyms which randomly replace 10% of the occurences in the triples for relations which occur at least 2000 times. (`FB15K_10_2000`)
-- synthetic synonyms which randomly replace 50% of the occurences in the triples for relations which occur at least 2000 times. (`FB15K_50_2000`)
-
-```shell
-$ python3 -m synonym_inject --percentage-per-relation 0.1 --min-relation-occurence 200 --func_inject_synonym inject_synonym_1 FB15K
-$ python3 -m synonym_inject --percentage-per-relation 0.5 --min-relation-occurence 200 --func_inject_synonym inject_synonym_1 FB15K
-$ python3 -m synonym_inject --percentage-per-relation 0.1 --min-relation-occurence 2000 --func_inject_synonym inject_synonym_1 FB15K
-$ python3 -m synonym_inject --percentage-per-relation 0.5 --min-relation-occurence 2000 --func_inject_synonym inject_synonym_1 FB15K
-```
-
-Additionally, we created a copy of FB15K with synthetic synonyms randomly replacing the occurrences of the corresponding relations (occuring at least 2000 times) for 50% of the subjects rather than randomly in the triple set (see **Figure 5** in the paper).
+The following command creates our copy of the original FB15K benchmark with synthetic synonyms, which randomly replaces the occurrences of the corresponding relations (occuring at least 2000 times) for 50% of the subjects.
 This benchmark we called `FB15K_2000_50`.
 
 ```shell
@@ -210,12 +196,11 @@ $ python3 -m synonym_inject --percentage-per-relation 0.5 --min-relation-occuren
 
 ###### 5.2 Synthetic Synonyms in Wikidata
 
-We also created two copies of our 10% sample of Wikidata, each with the same parameters (`p = 50%`, `min = 2000`) but with the two different approaches in creating synthetic synonyms.
-The copies are called `wikidata10percentNoLit_50_2000` and `wikidata10percentNoLit_2000_50`.
+We also created a copy of our Wikidata sample with the same parameters.
+This benchmark we called `wikidata-20181221TN-1k_2000_50`.
 
 ```shell
-$ python3 -m synonym_inject --percentage-per-relation 0.5 --min-relation-occurence 2000 --func_inject_synonym inject_synonym_1 wikidata10percentNoLit
-$ python3 -m synonym_inject --percentage-per-relation 0.5 --min-relation-occurence 2000 --func_inject_synonym inject_synonym_2 wikidata10percentNoLit
+$ python3 -m synonym_inject --percentage-per-relation 0.5 --min-relation-occurence 2000 --func_inject_synonym inject_synonym_2 wikidata-20181221TN-1k
 ```
 
 ### Training
@@ -234,46 +219,27 @@ For all embeddings, we mainly tweaked the following parameters:
 
 Apart from that, we always used 100 dimensions and generally sticked to the default values for all other parameters (see `python3 -m train_embedding -h`).
 
+For more information, see the corresponding Bash scripts.
+
 ###### 5.1 FB15K Datasets
 
 ```shell
-$ python3 -m train_embedding --dimension 100 -epoch-count 1000 --batch-count 50 --learning-rate 0.001 rescal benchmarks/FB15K_10_200/ embeddings/FB15K_10_200_rescal/
-$ python3 -m train_embedding --dimension 100 -epoch-count 1000 --batch-count 50 --learning-rate 0.001 rescal benchmarks/FB15K_50_200/ embeddings/FB15K_50_200_rescal/
-$ python3 -m train_embedding --dimension 100 -epoch-count 1000 --batch-count 50 --learning-rate 0.001 rescal benchmarks/FB15K_10_2000/ embeddings/FB15K_10_2000_rescal/
-$ python3 -m train_embedding --dimension 100 -epoch-count 1000 --batch-count 50 --learning-rate 0.001 rescal benchmarks/FB15K_50_2000/ embeddings/FB15K_50_2000_rescal/
-$ python3 -m train_embedding --dimension 100 -epoch-count 1000 --batch-count 50 --learning-rate 0.001 rescal benchmarks/FB15K_2000_50/ embeddings/FB15K_2000_50_rescal/
-```
-
-```shell
-$ python3 -m train_embedding --dimension 100 -epoch-count 2000 --batch-count 1 --learning-rate 0.00001 transe benchmarks/FB15K_10_200/ embeddings/FB15K_10_200_transe/
-$ python3 -m train_embedding --dimension 100 -epoch-count 2000 --batch-count 1 --learning-rate 0.00001 transe benchmarks/FB15K_50_200/ embeddings/FB15K_50_200_transe/
-$ python3 -m train_embedding --dimension 100 -epoch-count 2000 --batch-count 1 --learning-rate 0.00001 transe benchmarks/FB15K_10_2000/ embeddings/FB15K_10_2000_transe/
-$ python3 -m train_embedding --dimension 100 -epoch-count 2000 --batch-count 1 --learning-rate 0.00001 transe benchmarks/FB15K_50_2000/ embeddings/FB15K_50_2000_transe/
-$ python3 -m train_embedding --dimension 100 -epoch-count 2000 --batch-count 1 --learning-rate 0.00001 transe benchmarks/FB15K_2000_50/ embeddings/FB15K_2000_50_transe/
-```
-
-```shell
-$ python3 -m train_embedding --dimension 100 -epoch-count 2000 --batch-count 10 --learning-rate 0.00001 transh benchmarks/FB15K_10_200/ embeddings/FB15K_10_200_transh/
-$ python3 -m train_embedding --dimension 100 -epoch-count 2000 --batch-count 10 --learning-rate 0.00001 transh benchmarks/FB15K_50_200/ embeddings/FB15K_50_200_transh/
-$ python3 -m train_embedding --dimension 100 -epoch-count 2000 --batch-count 10 --learning-rate 0.00001 transh benchmarks/FB15K_10_2000/ embeddings/FB15K_10_2000_transh/
-$ python3 -m train_embedding --dimension 100 -epoch-count 2000 --batch-count 10 --learning-rate 0.00001 transh benchmarks/FB15K_50_2000/ embeddings/FB15K_50_2000_transh/
-$ python3 -m train_embedding --dimension 100 -epoch-count 2000 --batch-count 10 --learning-rate 0.00001 transh benchmarks/FB15K_2000_50/ embeddings/FB15K_2000_50_transh/
+$ ./train_FB15K.sh
 ```
 
 ###### 5.2 Wikidata Datasets
 
 ```shell
-$ python3 -m train_embedding --dimension 100 -epoch-count 1000 --batch-count 200 --learning-rate 0.0001 transh benchmarks/wikidata10percentNoLit_50_2000/ embeddings/wikidata10percentNoLit_50_2000_transh/
-$ python3 -m train_embedding --dimension 100 -epoch-count 1000 --batch-count 200 --learning-rate 0.0001 transh benchmarks/wikidata10percentNoLit_2000_50/ embeddings/wikidata10percentNoLit_2000_50_transh/
+$ ./train_wikidata-20181221TN-1k.sh
 ```
 
 ###### 5.3 DBpedia Dataset
 
 ```shell
-$ python3 -m train_embedding --dimension 100 -epoch-count 2000 --batch-count 20 --learning-rate 0.000025 transh benchmarks/dbpediaSample25percentWithoutLiterals/ embeddings/dbpediaSample25percentWithoutLiterals_transh/
+$ ./train_dbpedia-201610N-1k-filtered.sh
 ```
 
-### Synonym Detection
+### Synonym Detection and Evaluation with our method
 
 Again, we need to change to the root of the repository if not done yet.
 Additionally, it is a good idea to prevent tensorflow-gpu to load the embeddings into the GPU VRAM because we don't want to train anything.
@@ -283,39 +249,20 @@ $ cd ./
 $ . ./select_gpu -2
 ```
 
-For the `synonym_analysis.py` script, keep in mind that you have to specify the correct number of embedding dimensions.
+For the `synonym_analysis.py` script, note that we have to specify the correct number of embedding dimensions.
+
+For more information, see the corresponding Bash scripts.
 
 ###### 5.1 FB15K Datasets
 
 ```shell
-$ python3 -m synonym_analysis --dimension 100 --ground-truth-available rescal benchmarks/FB15K_10_200/ embeddings/FB15K_10_200_rescal/ experiments/FB15K_10_200_rescal/
-$ python3 -m synonym_analysis --dimension 100 --ground-truth-available rescal benchmarks/FB15K_50_200/ embeddings/FB15K_50_200_rescal/ experiments/FB15K_50_200_rescal/
-$ python3 -m synonym_analysis --dimension 100 --ground-truth-available rescal benchmarks/FB15K_10_2000/ embeddings/FB15K_10_2000_rescal/ experiments/FB15K_10_2000_rescal/
-$ python3 -m synonym_analysis --dimension 100 --ground-truth-available rescal benchmarks/FB15K_50_2000/ embeddings/FB15K_50_2000_rescal/ experiments/FB15K_50_2000_rescal/
-$ python3 -m synonym_analysis --dimension 100 --ground-truth-available rescal benchmarks/FB15K_2000_50/ embeddings/FB15K_2000_50_rescal/ experiments/FB15K_2000_50_rescal/
-```
-
-```shell
-$ python3 -m synonym_analysis --dimension 100 --ground-truth-available transe benchmarks/FB15K_10_200/ embeddings/FB15K_10_200_transe/ experiments/FB15K_10_200_transe/
-$ python3 -m synonym_analysis --dimension 100 --ground-truth-available transe benchmarks/FB15K_50_200/ embeddings/FB15K_50_200_transe/ experiments/FB15K_50_200_transe/
-$ python3 -m synonym_analysis --dimension 100 --ground-truth-available transe benchmarks/FB15K_10_2000/ embeddings/FB15K_10_2000_transe/ experiments/FB15K_10_2000_transe/
-$ python3 -m synonym_analysis --dimension 100 --ground-truth-available transe benchmarks/FB15K_50_2000/ embeddings/FB15K_50_2000_transe/ experiments/FB15K_50_2000_transe/
-$ python3 -m synonym_analysis --dimension 100 --ground-truth-available transe benchmarks/FB15K_2000_50/ embeddings/FB15K_2000_50_transe/ experiments/FB15K_2000_50_transe/
-```
-
-```shell
-$ python3 -m synonym_analysis --dimension 100 --ground-truth-available transh benchmarks/FB15K_10_200/ embeddings/FB15K_10_200_transh/ experiments/FB15K_10_200_transh/
-$ python3 -m synonym_analysis --dimension 100 --ground-truth-available transh benchmarks/FB15K_50_200/ embeddings/FB15K_50_200_transh/ experiments/FB15K_50_200_transh/
-$ python3 -m synonym_analysis --dimension 100 --ground-truth-available transh benchmarks/FB15K_10_2000/ embeddings/FB15K_10_2000_transh/ experiments/FB15K_10_2000_transh/
-$ python3 -m synonym_analysis --dimension 100 --ground-truth-available transh benchmarks/FB15K_50_2000/ embeddings/FB15K_50_2000_transh/ experiments/FB15K_50_2000_transh/
-$ python3 -m synonym_analysis --dimension 100 --ground-truth-available transh benchmarks/FB15K_2000_50/ embeddings/FB15K_2000_50_transh/ experiments/FB15K_2000_50_transh/
+$ ./analyse_FB15K.sh
 ```
 
 ###### 5.2 Wikidata Datasets
 
 ```shell
-$ python3 -m synonym_analysis --dimension 100 --ground-truth-available transh benchmarks/wikidata10percentNoLit_50_2000/ embeddings/wikidata10percentNoLit_50_2000_transh/ experiments/wikidata10percentNoLit_50_2000_transh/
-$ python3 -m synonym_analysis --dimension 100 --ground-truth-available transh benchmarks/wikidata10percentNoLit_2000_50/ embeddings/wikidata10percentNoLit_2000_50_transh/ experiments/wikidata10percentNoLit_2000_50_transh/
+$ ./analyse_wikidata-20181221TN-1k.sh
 ```
 
 ###### 5.3 DBpedia Dataset
@@ -324,10 +271,10 @@ Here, we excluded the `--ground-truth-available` option, because the synonym pai
 Thus, we had to manually evaluate the classified synonym pairs.
 
 ```shell
-$ python3 -m synonym_analysis --dimension 100 transh benchmarks/dbpediaSample25percentWithoutLiterals/ embeddings/dbpediaSample25percentWithoutLiterals_transh/ experiments/dbpediaSample25percentWithoutLiterals_transh/
+$ ./analyse_dbpedia-201610N-1k-filtered.sh
 ```
 
-### Evaluation
+### Synonym Detection and Evaluation with our baseline and Plotting of all results
 
 Again, we need to change to the root of the repository if not done yet.
 
@@ -335,24 +282,27 @@ Again, we need to change to the root of the repository if not done yet.
 $ cd ./
 ```
 
+The following scripts will perform the baseline evaluation and plot all results calculated up until now.
+Note that the evaluation of our method is already performed in the analysis scripts in the previous section.
+Because of the slightly different evaluation approach in our DBpedia experiment, the overall evaluation is performed _with_ the baseline.py output in this section.
+
+For more information, see the corresponding Bash scripts.
+
 ###### 5.1 FB15K Datasets
 
 ```shell
-$ python3 -m plot_evaluation --experiment experiments/FB15K_10_200
-$ python3 -m plot_evaluation --experiment experiments/FB15K_50_200
-$ python3 -m plot_evaluation --experiment experiments/FB15K_10_2000
-$ python3 -m plot_evaluation --experiment experiments/FB15K_50_2000
-$ python3 -m plot_evaluation --experiment experiments/FB15K_2000_50
+$ ./baseline_FB15K.sh
 ```
 
 ###### 5.2 Wikidata Datasets
 
 ```shell
-$ python3 -m plot_evaluation --experiment experiments/wikidata10percentNoLit_50_2000
-$ python3 -m plot_evaluation --experiment experiments/wikidata10percentNoLit_2000_50
+$ ./baseline_wikidata-20181221TN-1k.sh
 ```
 
 ###### 5.3 DBpedia Dataset
 
-As mentioned before, we had to manually evaluate the classified synonym pairs for this knowledge embedding.
+```shell
+$ ./baseline_dbpedia-201610N-1k-filtered.sh
+```
 
