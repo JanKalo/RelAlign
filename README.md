@@ -1,5 +1,18 @@
 # Knowledge Graph Consolidation by Unifying Synonymous Relationships
 
+If you use the code, please cite the following paper:
+
+```
+@inproceedings{kalo2019iswc,
+  title={Knowledge Graph Consolidationby Unifying Synonymous Relationships},
+  author={Kalo, Jan-Christoph and Ehler, Philipp and Balke, Wolf-Tilo},
+  booktitle={The Semantic Web – ISWC 2019},
+  pages={},
+  year={2019}
+}
+```
+
+
 This is our repository containing all tools and scripts used for:
 
 - Creating custom benchmarks
