@@ -4,9 +4,10 @@ If you use the code, please cite the following paper:
 
 ```
 @inproceedings{kalo2019iswc,
-  title={Knowledge Graph Consolidationby Unifying Synonymous Relationships},
+  title={Knowledge Graph Consolidation by Unifying Synonymous Relationships},
   author={Kalo, Jan-Christoph and Ehler, Philipp and Balke, Wolf-Tilo},
-  booktitle={The Semantic Web – ISWC 2019},
+  booktitle="Proceedings of the 18th International Semantic Web Conference on The Semantic Web",
+  series = {ISWC '19},
   pages={},
   year={2019}
 }
