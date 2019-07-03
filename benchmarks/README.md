@@ -1,7 +1,7 @@
-# OpenKE benchmark directory
+# OpenKE dataset directory
 
-This directory contains the OpenKE benchmarks and two additional scripts.
-A benchmark is a directory describing a dataset with these files:
+This directory contains the OpenKE datasets and two additional scripts to generate the input files.
+For each dataset a directory containing the following files is needed:
 
 - entity2id.txt (OID mapped entities)
 - relation2id.txt (OID mapped relations)
@@ -11,27 +11,27 @@ A benchmark is a directory describing a dataset with these files:
 
 ## map\_input.py
 
-This script maps a flat triple file (i.e. \*.nt file) into an OpenKE benchmark.
-It was used with Python2.7 but it should also work with Python3.
+This script maps a flat triple file (i.e. \*.nt file) into an OpenKE readable format.
+It should work with Python 2 and Python 3.
 
-Example usage for generating a benchmark with validation and test triples
+Example usage for generating a OpenKE readable files with validation and test triples
 (80% for training, 10% each for validation and test):
 
 ```shell
 $ python -m map_input flat_triple_file.nt 1
 ```
 
-Example usage for generating a benchmark without validation and test triples:
+Example usage for generating a dataset without validation and test triples:
 
 ```shell
 $ python -m map_input flat_triple_file.nt 0
 ```
 
-The benchmark files will be stored in the same directory from where the script was executed.
+The dataset files will be stored in the same directory from where the script was executed.
 
 ## synonym\_inject.py
 
-This script injects synonyms into an existing benchmark.
+This script created synthetic synonyms for an existing dataset.
 
 Usage:
 
@@ -58,10 +58,9 @@ optional arguments:
                           The injection func to use (Default: inject_synonym_1)
 ```
 
-`INPUT_BENCHMARK` is the directory of the target benchmark.
-The new benchmark will be saved in the same directory where `INPUT_BENCHMARK` is located.
+`INPUT_BENCHMARK` is the directory of the target dataset.
+The new dataset will be saved in the same directory where `INPUT_BENCHMARK` is located.
 
-## Our benchmarks
+## Our datasets
 
-Because of the size and number of benchmarks we experimented with, we will gladly provide them (currently only) on request.
-
+Because of the size of our datasets, we hosted the datasets externally.
