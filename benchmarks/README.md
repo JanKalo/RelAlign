@@ -63,4 +63,4 @@ The new dataset will be saved in the same directory where `INPUT_BENCHMARK` is l
 
 ## Our datasets
 
-Because of the size of our datasets, we hosted the datasets externally.
+Our datasets are available via the DOI: https://doi.org/10.6084/m9.figshare.8490134
