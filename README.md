@@ -16,10 +16,10 @@ If you use the code, please cite the following paper:
 
 This is our repository containing all tools and scripts used for:
 
-- Creating custom benchmarks
-- Training Knowledge Embeddings of benchmarks
-- Detecting synonymous relations with such embeddings
-- Evaluating detected synonyms
+- Creating input files from .nt files.
+- Training knowledge embeddings using Tensorflow and OpenKE
+- Detecting synonymous relations using the embeddings
+- Evaluating detected synonyms and creating plots
 
 ## Dependencies
 
@@ -56,7 +56,7 @@ Example usage:
 $ python3 -m train_embedding --epoch-count 1000 --batch-count 10 transh benchmarks/FB15K/ embeddings/FB15K_transh/
 ```
 
-This will load the benchmark located at `benchmarks/FB15K/` into OpenKE and will start training with model type **TransH**.
+This will load the dataset located at `benchmarks/FB15K/` into OpenKE and will start training with model type **TransH**.
 The resulting embedding is saved in this directory: `embeddings/FB15K_transh/`
 
 For more options, see:
@@ -126,11 +126,11 @@ Example usage:
 $ python3 -m plot_evaluation -e experiments/FB15K
 ```
 
-This will look for all experiment directories of FB15K (i.e. `experiments/FB15K_transe/`, `experiments/FB15K_transh/`, ...) and summarize their precision-recall plots into `experiments/FB15K_l1.pdf` and `experiments/FB15K_cos.pdf`.
+This will look for all experiment directories of FB15K (i.e. `experiments/FB15K_transe/`, `experiments/FB15K_transh/`, ...) and create respective precision-recall plots as `experiments/FB15K_l1.pdf` and `experiments/FB15K_cos.pdf`.
 
 ### evaluate\_dbpedia.py
 
-This script performs specifically our dbpedia evaluation (including plotting of precision@top-k diagrams) for a given (manually crafted) gold standard and a baseline.py output.
+This script is performing the evaluation of our manually evaluated DBpedia dataset (including precision@k diagrams) for a given (manually crafted) gold standard and a baseline.py output.
 This script internally contains the relevant classification files for each model and similarity function we used.
 
 Example usage:
@@ -184,13 +184,13 @@ Also plots all results.
 
 ## Experiments
 
-In this Subsection we describe how we used this source code to calculate our results described in the evaluation chapter of the paper.
-First, we describe the synthetic synonym creation, followed by the training of our selected benchmarks.
-Finally, we describe how we have detected synonyms in our trained models and how we created our evaluation results.
+In this subsection, we describe how to reproduce the results described in the evaluation section of the paper.
+First, we describe the synthetic synonym creation, followed by the training of the respective datasets.
+Afterwards, we synonym detection is performed and the results are evaluated and plots in .pdf format are created.
 
 ### Synthetic Synonyms
 
-To create a copy of a benchmark which should include synthetic synonyms, it is necessary to change into the `benchmarks` directory.
+To create synthetic synonyms, it is necessary to change into the `benchmarks` directory.
 
 ```shell
 $ cd ./benchmarks/.
@@ -255,7 +255,7 @@ $ ./train_dbpedia-201610N-1k-filtered.sh
 
 ### Synonym Detection and Evaluation with our method
 
-Again, we need to change to the root of the repository if not done yet.
+Again, we need to change to the root of the repository, if not done yet.
 Additionally, it is a good idea to prevent tensorflow-gpu to load the embeddings into the GPU VRAM because we don't want to train anything.
 
 ```shell
