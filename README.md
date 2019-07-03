@@ -191,7 +191,7 @@ Afterwards, we synonym detection is performed and the results are evaluated and 
 ### Datasets
 
 Our Freebase, DBpedia and Wikidata samples are available under: https://doi.org/10.6084/m9.figshare.8490134
-The manually evaluated baseline is available under: https://figshare.com/s/11d4af3169a0e6d2437b
+The manually evaluated baseline is available under: https://doi.org/10.6084/m9.figshare.8188394
 
 ### Synthetic Synonyms
 
