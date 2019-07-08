@@ -21,6 +21,12 @@ This is our repository containing all tools and scripts used for:
 - Detecting synonymous relations using the embeddings
 - Evaluating detected synonyms and creating plots
 
+## System Requirements
+
+-minimum 32GB RAM
+-a CUDA-enabled GPU with at least 11GB memory (the software runs also on CPU, but the training is extremely slow)
+
+
 ## Dependencies
 
 - [OpenKE](https://github.com/thunlp/OpenKE) (compile library under thirdParty/OpenKE/ first!)
