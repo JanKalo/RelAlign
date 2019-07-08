@@ -23,8 +23,8 @@ This is our repository containing all tools and scripts used for:
 
 ## System Requirements
 
--minimum 32GB RAM
--a CUDA-enabled GPU with at least 11GB memory (the software runs also on CPU, but the training is extremely slow)
+- minimum 32GB RAM
+- a CUDA-enabled GPU with at least 11GB memory (the software runs also on CPU, but the training is extremely slow)
 
 
 ## Dependencies
