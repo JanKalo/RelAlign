@@ -30,9 +30,12 @@ This is our repository containing all tools and scripts used for:
 ## Dependencies
 
 - [OpenKE](https://github.com/thunlp/OpenKE) (compile library under thirdParty/OpenKE/ first!)
-- Python2 with pyfpgrowth and pyspark (for baseline)
 - Python3
-- Bash (for some scripts)
+- Dependencies for our Baseline:
+    - Python2
+    - pyfpgrowth
+    - pyspark
+    - Java 8
 
 ## Python Files
 
