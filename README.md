@@ -29,13 +29,37 @@ This is our repository containing all tools and scripts used for:
 
 ## Dependencies
 
-- [OpenKE](https://github.com/thunlp/OpenKE) (compile library under thirdParty/OpenKE/ first!)
+- [OpenKE](https://github.com/thunlp/OpenKE) (included in thirdParty directory)
+- Python2
 - Python3
-- Dependencies for our Baseline:
-    - Python2
+- Java 8
+- PyPi Packages
+    - matplotlib
+    - numpy
+    - pandas
     - pyfpgrowth
     - pyspark
-    - Java 8
+    - pyspark-utils
+    - tensorflow | tensorflow-gpu
+
+## FIRST STEPS
+
+### Compile OpenKE C-library:
+
+```shell
+$ cd ./thirdParty/OpenKE
+$ ./make.sh
+```
+
+### Install Python requirements:
+
+```shell
+$ cd ./
+$ python2 -m pip install -r requirements_py2.txt
+$ python3 -m pip install -r requirements_py3.txt
+```
+
+See requirements\_py3.txt to select whether to install tensorflow or tensorflow-gpu
 
 ## Python Files
 
