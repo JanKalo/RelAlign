@@ -59,7 +59,7 @@ $ python2 -m pip install -r requirements_py2.txt
 $ python3 -m pip install -r requirements_py3.txt
 ```
 
-See requirements\_py3.txt to select whether to install tensorflow or tensorflow-gpu
+See requirements\_py3.txt to select whether to install tensorflow or tensorflow-gpu.
 
 ## Python Files
 
