@@ -502,8 +502,10 @@ def analyse_embedding(embedding, output_dir, fn_synonyms_id, func_delta_r=None):
             max_val_y += max_val_y / 10.0
             # plot 2-tuple values curve and save it
             plt.clf()
-            plt.xlim([0, max_val_x if max_val_x > 0.0 and max_val_x < 1.0 else 1])
-            plt.ylim([0, max_val_y if max_val_y > 0.0 and max_val_y < 1.0 else 1])
+            #plt.xlim([0, max_val_x if max_val_x > 0.0 and max_val_x < 1.0 else 1])
+            #plt.ylim([0, max_val_y if max_val_y > 0.0 and max_val_y < 1.0 else 1])
+            plt.xlim([0, 1])
+            plt.ylim([0, 1])
             plt.plot(val2[min_idx:], val1[min_idx:])
             plt.xlabel(xlabel)
             plt.ylabel(ylabel)
