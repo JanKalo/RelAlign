@@ -58,13 +58,36 @@ class Embedding(object):
         entities_file = open(os.path.join(self.benchmark_dir, "entity2id.txt"), "r")
         self.entities = entities_file.readlines()[1:]
         entities_file.close()
+        self.ent_ids = {}
+        for line in self.entities:
+            entity = line.split("\t")[0].replace("_synonym", "")
+            ent_id = line.split("\t")[1].replace("\n", "")
+            self.ent_ids[entity] = ent_id
+
         relations_file = open(os.path.join(self.benchmark_dir, "relation2id.txt"), "r")
         self.relations = relations_file.readlines()[1:]
+        self.rel_ids = {}
         relations_file.close()
+        for line in self.relations:
+                relation = line.split("\t")[0].replace("_synonym", "")
+                rel_id = line.split("\t")[1].replace("\n", "")
+                self.rel_ids[relation] = rel_id
         print("Done")
+
+    def lookup_ent_id(self, entity):
+        if entity in self.ent_ids:
+	        return self.ent_ids[entity]
+        else:
+            return None
 
     def lookup_entity(self, ent_id):
         return self.entities[ent_id].split('\t')[0]
+
+    def lookup_rel_id(self, relation):
+        if relation in self.rel_ids:
+	        return self.rel_ids[relation]
+        else:
+            return None
 
     def lookup_relation(self, rel_id):
         return self.relations[rel_id].split('\t')[0]
