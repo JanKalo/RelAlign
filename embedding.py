@@ -60,16 +60,16 @@ class Embedding(object):
         entities_file.close()
         self.ent_ids = {}
         for line in self.entities:
-            entity = line.split("\t")[0].replace("_synonym", "")
+            entity = line.split("\t")[0]
             ent_id = line.split("\t")[1].replace("\n", "")
             self.ent_ids[entity] = ent_id
 
         relations_file = open(os.path.join(self.benchmark_dir, "relation2id.txt"), "r")
         self.relations = relations_file.readlines()[1:]
-        self.rel_ids = {}
         relations_file.close()
+        self.rel_ids = {}
         for line in self.relations:
-                relation = line.split("\t")[0].replace("_synonym", "")
+                relation = line.split("\t")[0]
                 rel_id = line.split("\t")[1].replace("\n", "")
                 self.rel_ids[relation] = rel_id
         print("Done")
