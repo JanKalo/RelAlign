@@ -60,8 +60,8 @@ class Embedding(object):
         entities_file.close()
         self.ent_ids = {}
         for line in self.entities:
-            entity = line.split("\t")[0]
-            ent_id = line.split("\t")[1].replace("\n", "")
+            entity = line.split("\t")[0].lstrip("<").rstrip(">")
+            ent_id = int(line.split("\t")[1].replace("\n", ""))
             self.ent_ids[entity] = ent_id
 
         relations_file = open(os.path.join(self.benchmark_dir, "relation2id.txt"), "r")
@@ -69,14 +69,15 @@ class Embedding(object):
         relations_file.close()
         self.rel_ids = {}
         for line in self.relations:
-                relation = line.split("\t")[0]
-                rel_id = line.split("\t")[1].replace("\n", "")
+                relation = line.split("\t")[0].lstrip("<").rstrip(">")
+                rel_id = int(line.split("\t")[1].replace("\n", ""))
                 self.rel_ids[relation] = rel_id
         print("Done")
 
     def lookup_ent_id(self, entity):
-        if entity in self.ent_ids:
-	        return self.ent_ids[entity]
+        ent = entity.lstrip("<").rstrip(">")
+        if ent in self.ent_ids:
+	        return self.ent_ids[ent]
         else:
             return None
 
@@ -84,8 +85,9 @@ class Embedding(object):
         return self.entities[ent_id].split('\t')[0]
 
     def lookup_rel_id(self, relation):
-        if relation in self.rel_ids:
-	        return self.rel_ids[relation]
+        rel = relation.lstrip("<").rstrip(">")
+        if rel in self.rel_ids:
+	        return self.rel_ids[rel]
         else:
             return None
 
