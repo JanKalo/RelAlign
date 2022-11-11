@@ -1,4 +1,4 @@
 # pyfpgrowth and pyspark (for baseline, use with python2)
 pyfpgrowth==1.0
-pyspark==2.4.0
+pyspark==3.2.2
 pyspark-utils==1.2.1
